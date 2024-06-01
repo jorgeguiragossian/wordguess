@@ -1,0 +1,77 @@
+import random
+
+# Welcome message
+welcome = [
+    'Welcome to the word guess game! A word will be chosen at random and',
+    'you must try to guess the word correctly letter by letter',
+    'before you run out of attempts. Good luck!\n'
+]
+for line in welcome:
+    print(line, sep='\n')
+
+# Start setup the play_again loop
+play_again = True
+
+# Capture the number of invalid tries allowed
+tries = int(input("\nHow many tries do you want for each word attempt?\n> "))
+
+while play_again:
+
+    # Create empty 'words' list that will be filled by words.txt file
+    words = []
+    
+    # Python code to read file word by word
+    with open('words.txt', 'r') as file:
+        for line in file:
+            for word in line.split():
+                words.append(word)
+    
+    # Select a random word from the words list
+    chosen_word = random.choice(words).lower()
+    player_guess = None
+    guessed_letters = []
+    word_guessed = ['-' for _ in chosen_word]
+    joined_word = None
+    attempts = tries
+
+    while attempts != 0 and "-" in word_guessed:
+        print(f"\nYou have {attempts} attempts remaining")
+        joined_word = "".join(word_guessed)
+        print(joined_word)
+
+        try:
+            player_guess = str(input("\nPlease select a letter between A-Z\n> ")).lower()
+        except ValueError:
+            print("That is not valid input. Please try again.")
+            continue
+
+        if not player_guess.isalpha():
+            print("That is not a letter. Please try again.")
+            continue
+        elif len(player_guess) > 1:
+            print("That is more than one letter. Please try again.")
+            continue
+        elif player_guess in guessed_letters:
+            print("You have already guessed that letter. Please try again.")
+            continue
+        else:
+            guessed_letters.append(player_guess)
+            print(f"Letters you selected already are: {guessed_letters}")
+        
+        for letter in range(len(chosen_word)):
+            if player_guess == chosen_word[letter]:
+                word_guessed[letter] = player_guess
+        
+        if player_guess not in chosen_word:
+            attempts -= 1
+        
+        if "-" not in word_guessed:
+            print(f"\nCongratulations!!! '{chosen_word}' was the word search word.")
+            
+        else:
+            print(f"\nUnlucky play! The word was '{chosen_word}'")
+
+    print("\nWould you like to play again? yes/no")
+    response = input("> ").lower()
+    if response not in ("yes", "y"):
+        play_again = False
